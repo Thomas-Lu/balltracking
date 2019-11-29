@@ -39,8 +39,8 @@ def Lmu_stack(input_tensor, return_sequences):
     for i in range(shape[-1]):
         x = Lambda(lambda x: x[...,i])(input_tensor)
         x = lmu_layer(return_sequences=return_sequences)(x)
-        t1.append(Dense(1)(x))
-        t2.append(Dense(49)(x))
+        t1.append(Dense(1, activation=relu)(x))
+        t2.append(Dense(49, activation=relu)(x))
     return [Lambda(lambda x: K.backend.stack(x, axis=-1))(t1), Lambda(lambda x: K.backend.stack(x, axis=-1))(t2)]
 
 def velocity_layer(t):
@@ -53,7 +53,7 @@ def deconvolution_layer(t):
     heat = TimeDistributed(UpSampling2D( interpolation='bilinear'))(heat)
     heat = TimeDistributed(Conv2DTranspose(filters=8,kernel_size=3,strides=2, dilation_rate=1,activation='relu', padding='same'))(heat)
     heat = TimeDistributed(UpSampling2D( interpolation='bilinear'))(heat)
-    heat = TimeDistributed(Conv2DTranspose(filters=1,kernel_size=3,strides=2, dilation_rate=1,activation='relu', padding='same'), name="heatmap")(heat)
+    heat = TimeDistributed(Conv2DTranspose(filters=1,kernel_size=3,strides=2, dilation_rate=1,activation='sigmoid', padding='same'), name="heatmap")(heat)
     return heat
 
 seq_len = 15
@@ -93,3 +93,5 @@ losses = {
 model.compile(loss=losses, optimizer='adam', metrics=['accuracy'])
 model.fit(X, [Y,V], epochs=30, batch_size=16, validation_split=0.05, 
         callbacks=[EarlyStopping(restore_best_weights=True, patience=2)])
+
+model.save('model_1.h5')
