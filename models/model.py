@@ -51,9 +51,9 @@ def deconvolution_layer(t):
     heat = TimeDistributed(Reshape([7,7,-1]))(t)
     heat = TimeDistributed(Conv2DTranspose(filters=32,kernel_size=3,strides=2, dilation_rate=1,activation='relu', padding='same'))(heat)
     heat = TimeDistributed(UpSampling2D( interpolation='bilinear'))(heat)
-    heat = TimeDistributed(Conv2DTranspose(filters=8,kernel_size=3,strides=2, dilation_rate=1,activation='relu', padding='same'))(heat)
+    heat = TimeDistributed(Conv2DTranspose(filters=8,kernel_size=3,strides=2, dilation_rate=1,activation='relu', padding='same', name="velocity"))(heat)
     heat = TimeDistributed(UpSampling2D( interpolation='bilinear'))(heat)
-    heat = TimeDistributed(Conv2DTranspose(filters=1,kernel_size=3,strides=2, dilation_rate=1,activation='relu', padding='same'))(heat)
+    heat = TimeDistributed(Conv2DTranspose(filters=1,kernel_size=3,strides=2, dilation_rate=1,activation='relu', padding='same', name="heatmap"))(heat)
     return heat
 
 seq_len = 15
@@ -70,9 +70,9 @@ x = TimeDistributed(Conv2D(kernel_size=1, filters=64))(x) #reduce channels
 
 out1, out2 = Lmu_stack(x, return_sequences=True)
 
-v = velocity_layer(out1, name="velocity")
+v = velocity_layer(out1)
 
-heat = deconvolution_layer(out2, name="heatmap")
+heat = deconvolution_layer(out2)
 
 model = Model(inputs=input_layer, outputs=[heat,v])
 
