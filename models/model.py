@@ -45,15 +45,15 @@ def Lmu_stack(input_tensor, return_sequences):
 
 def velocity_layer(t):
     t = TimeDistributed(Reshape([-1]))(t)
-    return TimeDistributed(Dense(2))(t)
+    return TimeDistributed(Dense(2), name="velocity")(t)
 
 def deconvolution_layer(t):
     heat = TimeDistributed(Reshape([7,7,-1]))(t)
     heat = TimeDistributed(Conv2DTranspose(filters=32,kernel_size=3,strides=2, dilation_rate=1,activation='relu', padding='same'))(heat)
     heat = TimeDistributed(UpSampling2D( interpolation='bilinear'))(heat)
-    heat = TimeDistributed(Conv2DTranspose(filters=8,kernel_size=3,strides=2, dilation_rate=1,activation='relu', padding='same', name="velocity"))(heat)
+    heat = TimeDistributed(Conv2DTranspose(filters=8,kernel_size=3,strides=2, dilation_rate=1,activation='relu', padding='same'))(heat)
     heat = TimeDistributed(UpSampling2D( interpolation='bilinear'))(heat)
-    heat = TimeDistributed(Conv2DTranspose(filters=1,kernel_size=3,strides=2, dilation_rate=1,activation='relu', padding='same', name="heatmap"))(heat)
+    heat = TimeDistributed(Conv2DTranspose(filters=1,kernel_size=3,strides=2, dilation_rate=1,activation='relu', padding='same'), name="heatmap")(heat)
     return heat
 
 seq_len = 15
