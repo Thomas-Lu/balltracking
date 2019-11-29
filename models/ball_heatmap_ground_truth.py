@@ -14,6 +14,7 @@ def main(width, height, samples, frames, save=False):
     
     X = []
     Y = []
+    V = []
     screen = pygame.display.set_mode((width, height))
     end = False       
     for sample_count in range(samples):
@@ -24,13 +25,15 @@ def main(width, height, samples, frames, save=False):
         v_y = np.random.randint(-1, 1) # initial y-velocity
         color = np.random.randint(50, 255, 3) # background is black so starting at 50
         X_frames = []
+        V_frames = []
                             
         for frame_count in range(frames):                
             x += v_x
             y += v_y
             screen.fill((0, 0, 0))
             pygame.draw.circle(screen, color, (x,y), radius)
-            X_frames.append(pygame.surfarray.array3d(screen))            
+            X_frames.append(pygame.surfarray.array3d(screen))
+            V_frames.append([x,y])
             # check for bounce
             if x <= radius or x >= width - radius:
                 v_x *= -1
@@ -43,18 +46,18 @@ def main(width, height, samples, frames, save=False):
         # Y
         grayscale = np.dot(np.array(X_frames), np.array([0.2125, 0.7154, 0.0721]))
         Y.append(grayscale.astype('uint8'))
+        # V
+        V.append(V_frames)
                 
     
     if save:
         np.save("X_width_" + str(width) + "_" + str(frames) + "_" + str(samples), np.array(X))
         np.save("Y_width_" + str(width) + "_" + str(frames) + "_" + str(samples), np.array(Y))
-            
+        np.save("V_width_" + str(width) + "_" + str(frames) + "_" + str(samples), np.array(V))
+        
     #return np.array(X), np.array(Y)
     pygame.quit()
                     
                 
-                
-                
-            
-
-        
+if __name__ == '__main__':
+    main(224,224,2048,15,save=True)
