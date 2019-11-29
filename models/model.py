@@ -39,8 +39,8 @@ def Lmu_stack(input_tensor, return_sequences):
     for i in range(shape[-1]):
         x = Lambda(lambda x: x[...,i])(input_tensor)
         x = lmu_layer(return_sequences=return_sequences)(x)
-        t1.append(Dense(1, activation=relu)(x))
-        t2.append(Dense(49, activation=relu)(x))
+        t1.append(Dense(1, activation='relu')(x))
+        t2.append(Dense(49, activation='relu')(x))
     return [Lambda(lambda x: K.backend.stack(x, axis=-1))(t1), Lambda(lambda x: K.backend.stack(x, axis=-1))(t2)]
 
 def velocity_layer(t):
