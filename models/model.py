@@ -70,20 +70,26 @@ x = TimeDistributed(Conv2D(kernel_size=1, filters=64))(x) #reduce channels
 
 out1, out2 = Lmu_stack(x, return_sequences=True)
 
-v = velocity_layer(out1)
+v = velocity_layer(out1, name="velocity")
 
-heat = deconvolution_layer(out2)
+heat = deconvolution_layer(out2, name="heatmap")
 
 model = Model(inputs=input_layer, outputs=[heat,v])
 
 model.summary()
 
 #Data
-X = np.load('X.npy')
-Y = np.load('Y.npy')
-V = np.load('V.npy')
+X = np.load('X_width_224_15_2048.npy')
+Y = np.load('Y_width_224_15_2048.npy')
+V = np.load('V_width_224_15_2048.npy')
 Y = np.expand_dims(Y, (-1))
 print(X.shape, Y.shape, V.shape)
 
-model.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
-model.fit(X, [Y,V], epochs=30, batch_size=16)
+losses = {
+	"velocity": "mean_squared_error",
+	"heatmap": "binary_crossentropy",
+}
+
+model.compile(loss=losses, optimizer='adam', metrics=['accuracy'])
+model.fit(X, [Y,V], epochs=30, batch_size=16, validation_split=0.05, 
+        callbacks=[EarlyStopping(restore_best_weights=True, patience=2)])
