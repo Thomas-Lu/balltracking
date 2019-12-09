@@ -36,7 +36,7 @@ def main(width, height, samples, frames, save=False):
             pygame.draw.circle(screen, color, (x,y), radius)
             X_frames.append(pygame.surfarray.array3d(screen))
             P_frames.append([x,y])
-            V_frames.append(v_x,v_y])
+            V_frames.append([v_x,v_y])
             # check for bounce
             if x <= radius or x >= width - radius:
                 v_x *= -1
@@ -65,4 +65,4 @@ def main(width, height, samples, frames, save=False):
                     
                 
 if __name__ == '__main__':
-    main(224,224,10,15,save=True)
+    main(224,224,2048,15,save=True)
