@@ -19,11 +19,10 @@ def main(width, height, samples, frames, save=False):
     screen = pygame.display.set_mode((width, height))
     end = False       
     for sample_count in range(samples):
-        radius = np.random.randint(2, 7)
+        radius = np.random.randint(5, 20)
         x = np.random.randint(radius + 5, width - radius - 5) # initial x-position
         y = np.random.randint(radius + 5, height - radius - 5) # initial y-position
-        v_x = np.random.randint(-1, 1) # initial x-velocity
-        v_y = np.random.randint(-1, 1) # initial y-velocity
+        [v_x, v_y] = np.random.rand(2)*20-10 # initial x-velocity
         color = np.random.randint(50, 255, 3) # background is black so starting at 50
         X_frames = []
         P_frames =[]
