@@ -91,7 +91,7 @@ losses = {
 }
 
 model.compile(loss=losses, optimizer='adam', metrics=['accuracy'])
-model.fit(X, [Y,V], epochs=30, batch_size=16, validation_split=0.05, 
-        callbacks=[EarlyStopping(restore_best_weights=True, patience=2)])
+model.fit(X, [Y,V], epochs=50, batch_size=16, validation_split=0.05, 
+        callbacks=[EarlyStopping(restore_best_weights=True, patience=5)])
 
 model.save('model_1.h5')
